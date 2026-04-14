@@ -1,0 +1,17 @@
+# Backend (Java)
+backend/target/
+*.log
+
+# Frontend
+FrontEnd/node_modules/
+FrontEnd/dist/
+
+# Env
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# Mac
+.DS_Store

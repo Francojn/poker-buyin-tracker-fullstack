@@ -1,0 +1,48 @@
+## Create Session
+POST /api/v1/sessions
+Request Body: Session 
+
+## TOODO: Dedicated
+endpoint for summary data
+
+## List Sessions
+GET /api/v1/sessions
+
+## Retrieve Session
+Get /api/v1/session/{session_id}
+
+## Update Event
+PUT /api/v1/session/{event_id}
+
+## List Player List
+GET /api/v1/session/{session_id}/players
+
+## Retrieve sessionPlayer
+GET /api/v1/session/
+{session_id}/player/
+{playerId}
+
+## Partial Update Player
+PATCH /api/v1/session/
+{session_id}/players
+Request Body:
+Partial Session
+
+## Delete Player
+DELETE /api/v1/session/
+{session_id}/players/
+{playerId}
+
+
+
+
+## do this order
+POST   /api/v1/sessions
+GET    /api/v1/sessions
+GET    /api/v1/sessions/{sessionId}
+POST   /api/v1/sessions/{sessionId}/players
+GET    /api/v1/sessions/{sessionId}/players
+POST   /api/v1/sessions/{sessionId}/buyins
+PATCH  /api/v1/sessions/{sessionId}/buyins/{buyInId}
+POST   /api/v1/sessions/{sessionId}/players/{playerId}/cashout
+GET    /api/v1/sessions/{sessionId}/summary
