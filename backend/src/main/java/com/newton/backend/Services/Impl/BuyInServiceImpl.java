@@ -56,6 +56,7 @@ public class BuyInServiceImpl implements BuyInService {
                 .status(BuyInStatusEnum.PENDING)
                 .createdAt(LocalDateTime.now())
                 .note(request.getNote())
+                .paymentMethod(request.getPaymentMethod())
                 .build();
 
         buyInRepository.save(buyIn);

@@ -41,6 +41,10 @@ public class BuyIn {
     @Enumerated(EnumType.STRING)
     private BuyInStatusEnum status;
 
+    @Column(name = "payment_method")
+    @Enumerated(EnumType.STRING)
+    private PaymentMethodEnum paymentMethod;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "session_player_id")
     private SessionPlayer sessionPlayer;

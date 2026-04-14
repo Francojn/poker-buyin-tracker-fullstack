@@ -26,6 +26,7 @@ export default function ConnectionsPage() {
   const [error, setError] = useState("");
   const [actionError, setActionError] = useState("");
   const [busyId, setBusyId] = useState("");
+  const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
 
   const loadPage = async () => {
@@ -109,9 +110,6 @@ export default function ConnectionsPage() {
         <div>
           <p className="eyebrow">Connections</p>
           <h2>Manage your poker network</h2>
-          <p className="section-copy">
-            Send connection requests and respond to incoming requests so inviting players is easier.
-          </p>
         </div>
       </div>
 
@@ -122,7 +120,7 @@ export default function ConnectionsPage() {
         <>
           <div className="two-column-grid">
             <article className="section-card">
-              <h3>Send connection request</h3>
+              <h3>Send friend request</h3>
               <form className="form-grid compact-form" onSubmit={handleSendRequest}>
                 <label className="form-field form-field-full">
                   <span>Select user</span>
@@ -153,23 +151,20 @@ export default function ConnectionsPage() {
             <article className="section-card">
               <h3>Pending requests</h3>
               {pendingConnections.length === 0 ? (
-                <EmptyState
-                  title="No pending requests"
-                  description="Incoming connection requests will appear here."
-                />
+                <EmptyState title="No pending requests" />
               ) : (
                 <div className="stack-list">
                   {pendingConnections.map((connection) => (
-                    <div key={connection.id} className="row-card">
+                    <div key={connection.id} className="row-card connection-row">
                       <div>
                         <strong>{connection.senderUsername}</strong>
-                        <p>{formatDateTime(connection.createdAt)}</p>
+                        <p className="helper-text">{formatDateTime(connection.createdAt)}</p>
                       </div>
                       <div className="row-actions">
                         <StatusBadge value={connection.status} />
                         <button
                           type="button"
-                          className="button"
+                          className="button button-small button-xs"
                           disabled={busyId === connection.id}
                           onClick={() => runAction(connection.id, () => acceptConnection(connection.id))}
                         >
@@ -177,7 +172,7 @@ export default function ConnectionsPage() {
                         </button>
                         <button
                           type="button"
-                          className="button button-secondary"
+                          className="button button-secondary button-small button-xs"
                           disabled={busyId === connection.id}
                           onClick={() => runAction(connection.id, () => declineConnection(connection.id))}
                         >
@@ -194,10 +189,7 @@ export default function ConnectionsPage() {
           <article className="section-card">
             <h3>Accepted connections</h3>
             {acceptedConnections.length === 0 ? (
-              <EmptyState
-                title="No accepted connections"
-                description="Once a request is accepted, it will appear here."
-              />
+              <EmptyState title="No accepted connections" />
             ) : (
               <div className="stack-list">
                 {acceptedConnections.map((connection) => {
@@ -207,31 +199,52 @@ export default function ConnectionsPage() {
                       : connection.senderUsername;
 
                   return (
-                    <div key={connection.id} className="row-card">
-                      <div>
-                        <strong>{otherName}</strong>
-                        <p>Accepted connection</p>
-                      </div>
+                    <div key={connection.id} className="row-card connection-row">
+                      <strong>{otherName}</strong>
                       <div className="row-actions">
                         <StatusBadge value={connection.status} />
-                        <button
-                          type="button"
-                          className="button button-secondary"
-                          disabled={busyId === connection.id}
-                          onClick={() => runAction(connection.id, () => removeConnection(connection.id))}
-                        >
-                          Remove
-                        </button>
+                        {confirmRemoveId === connection.id ? (
+                          <>
+                            <span className="muted-text" style={{ fontSize: "0.8rem" }}>Sure?</span>
+                            <button
+                              type="button"
+                              className="button button-danger button-small button-xs"
+                              disabled={busyId === connection.id}
+                              onClick={() => {
+                                setConfirmRemoveId(null);
+                                void runAction(connection.id, () => removeConnection(connection.id));
+                              }}
+                            >
+                              Confirm
+                            </button>
+                            <button
+                              type="button"
+                              className="button button-secondary button-small button-xs"
+                              onClick={() => setConfirmRemoveId(null)}
+                            >
+                              Cancel
+                            </button>
+                          </>
+                        ) : (
+                          <button
+                            type="button"
+                            className="button button-secondary button-small button-xs"
+                            disabled={busyId === connection.id}
+                            onClick={() => setConfirmRemoveId(connection.id)}
+                          >
+                            Remove
+                          </button>
+                        )}
                         {connection.senderId === user?.id && connection.status === "RECEIVED" ? (
                           <button
                             type="button"
-                            className="button button-secondary"
+                            className="button button-secondary button-small button-xs"
                             disabled={busyId === connection.id}
                             onClick={() =>
                               runAction(connection.id, () => cancelConnectionRequest(connection.id))
                             }
                           >
-                            Cancel request
+                            Cancel
                           </button>
                         ) : null}
                       </div>

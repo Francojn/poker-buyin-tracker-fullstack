@@ -2,6 +2,7 @@ package com.newton.backend.domain.dtos;
 
 import com.newton.backend.domain.BuyIn;
 import com.newton.backend.domain.BuyInStatusEnum;
+import com.newton.backend.domain.PaymentMethodEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +24,7 @@ public class BuyInDto {
     private String username;
     private BigDecimal amount;
     private BuyInStatusEnum status;
+    private PaymentMethodEnum paymentMethod;
     private LocalDateTime createdAt;
     private LocalDateTime respondedAt;
     private LocalDateTime paidAt;

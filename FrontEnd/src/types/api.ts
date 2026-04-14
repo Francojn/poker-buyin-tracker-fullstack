@@ -16,6 +16,7 @@ export type SessionStatus = "LIVE" | "COMPLETED";
 export type SessionPlayerRole = "HOST" | "USER";
 export type BuyInStatus = "PENDING" | "PAID" | "DECLINED" | "CANCELLED" | "CONFIRMED";
 export type CashOutStatus = "RECORDED" | "PAID_OUT" | "CANCELLED";
+export type PaymentMethod = "CASH" | "CARD";
 export type ConnectionStatus = "RECEIVED" | "ACCEPTED" | "DECLINED" | "CANCELLED";
 export type SessionInviteStatus = "RECEIVED" | "ACCEPTED" | "DECLINED" | "CANCELLED";
 
@@ -69,6 +70,7 @@ export interface BuyIn {
   username: string;
   amount: number | string;
   status: BuyInStatus;
+  paymentMethod?: PaymentMethod | null;
   createdAt: string;
   respondedAt?: string | null;
   paidAt?: string | null;
@@ -83,6 +85,7 @@ export interface CashOut {
   username: string;
   amount: number | string;
   status: CashOutStatus;
+  paymentMethod?: PaymentMethod | null;
   createdAt: string;
   paidOutAt?: string | null;
   cancelledAt?: string | null;
@@ -133,11 +136,13 @@ export interface CreateBuyInPayload {
   sessionPlayerId: Id;
   amount: number;
   note?: string;
+  paymentMethod?: PaymentMethod;
 }
 
 export interface CreateCashOutPayload {
   sessionPlayerId: Id;
   amount: number;
+  paymentMethod?: PaymentMethod;
 }
 
 export interface CreateConnectionPayload {

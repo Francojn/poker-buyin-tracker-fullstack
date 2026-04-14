@@ -38,6 +38,7 @@ export const endpoints = {
     cancel: (cashOutId: string) => `/api/v1/cashouts/${cashOutId}/cancel`
   },
   invites: {
+    listForSession: (sessionId: string) => `/api/v1/sessions/${sessionId}/invites`,
     accept: (inviteId: string) => `/api/v1/session_invites/${inviteId}/accept`,
     decline: (inviteId: string) => `/api/v1/session_invites/${inviteId}/deny`
   },

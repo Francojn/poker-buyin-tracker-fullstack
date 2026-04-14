@@ -97,12 +97,12 @@ export default function SessionsPage() {
                   <strong>{totals.totalSessions}</strong>
                 </article>
                 <article className="stat-card">
-                  <span>Total Players Across Sessions</span>
-                  <strong>{totals.totalPlayers}</strong>
-                </article>
-                <article className="stat-card">
                   <span>Total Buy-Ins Recorded</span>
                   <strong>{formatCurrency(totals.totalBuyIns)}</strong>
+                </article>
+                <article className="stat-card">
+                  <span>Total Players Across Sessions</span>
+                  <strong>{totals.totalPlayers}</strong>
                 </article>
               </div>
 

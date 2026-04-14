@@ -38,6 +38,10 @@ public class CashOut {
     @Column(name = "status", nullable = false)
     private CashOutStatusEnum status;
 
+    @Column(name = "payment_method")
+    @Enumerated(EnumType.STRING)
+    private PaymentMethodEnum paymentMethod;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "session_id", nullable = false)
     private Session session;

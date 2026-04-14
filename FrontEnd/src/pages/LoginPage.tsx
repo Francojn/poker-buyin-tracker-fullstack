@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getErrorMessage } from "../utils/http";
 
@@ -65,8 +65,7 @@ export default function LoginPage() {
             <p className="eyebrow">Smooth poker nights</p>
             <h2>Stop losing track of poker buy-ins. Keep every session organised end-to-end.</h2>
             <p>
-              Track sessions, players, invites, buy-ins, and cash-outs with your existing Spring
-              Boot backend.
+              Track sessions, players, invites, buy-ins, and cash-outs.
             </p>
           </div>
 
@@ -158,16 +157,6 @@ export default function LoginPage() {
                   : "Register"}
             </button>
 
-            <p className="helper-text">
-              Backend auth route:{" "}
-              <code>{mode === "login" ? "/api/v1/auth/login" : "/api/v1/auth/register"}</code>
-            </p>
-            <p className="helper-text">
-              Registration will log the new user in immediately if the backend returns a token.
-            </p>
-            <Link className="ghost-link" to="/sessions">
-              Protected pages will redirect here until you authenticate
-            </Link>
           </form>
         </div>
       </section>

@@ -1,6 +1,7 @@
 package com.newton.backend.domain.dtos;
 
 
+import com.newton.backend.domain.PaymentMethodEnum;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -21,4 +22,5 @@ public class CreateBuyInRequest {
     @NotNull @DecimalMin(value = "0.01")
     private BigDecimal amount;
     private String note;
+    private PaymentMethodEnum paymentMethod;
 }

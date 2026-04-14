@@ -56,6 +56,7 @@ public class CashOutServiceImpl implements CashOutService {
                 .amount(request.getAmount())
                 .status(CashOutStatusEnum.RECORDED)
                 .createdAt(LocalDateTime.now())
+                .paymentMethod(request.getPaymentMethod())
                 .build();
 
         cashOutRepository.save(cashOut);
