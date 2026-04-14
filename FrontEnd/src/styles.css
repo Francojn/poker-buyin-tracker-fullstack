@@ -57,7 +57,13 @@ button {
 
 .auth-page {
   min-height: 100vh;
-  padding: 24px;
+  padding: 0;
+  background-image:
+    linear-gradient(to right, rgba(5, 10, 20, 0.75) 0%, rgba(5, 10, 20, 0.3) 55%, rgba(5, 10, 20, 0.65) 100%),
+    url('/login-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 }
 
 .hero-card,
@@ -76,11 +82,15 @@ button {
 }
 
 .hero-card {
-  min-height: calc(100vh - 48px);
-  padding: 32px;
+  min-height: 100vh;
+  padding: 40px 48px;
   display: flex;
   flex-direction: column;
   gap: 48px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
 }
 
 .hero-nav,
@@ -405,10 +415,20 @@ button {
 .session-header-card {
   margin-bottom: 24px;
   background: #1a1d24;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
-.session-header-card .status-badge {
-  margin-bottom: 14px;
+.session-header-card h2 {
+  font-size: 1.6rem;
+  white-space: nowrap;
+}
+
+.session-header-card .muted-text {
+  flex: 1;
+  white-space: nowrap;
 }
 
 .status-badge {
@@ -441,11 +461,16 @@ button {
 
 .status-declined,
 .status-cancelled,
-.status-completed,
 .status-none {
   color: #ffb2b2;
   background: rgba(226, 116, 116, 0.12);
   border-color: rgba(226, 116, 116, 0.28);
+}
+
+.status-completed {
+  color: #a8b8d0;
+  background: rgba(148, 168, 196, 0.12);
+  border-color: rgba(148, 168, 196, 0.25);
 }
 
 .feedback-card {

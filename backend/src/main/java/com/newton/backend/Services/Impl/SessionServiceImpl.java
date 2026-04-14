@@ -234,10 +234,6 @@ public class SessionServiceImpl implements SessionService {
             throw new ForbiddenException("Only host can delete this session");
         }
 
-        if (session.getStatus() == SessionStatusEnum.COMPLETED) {
-            throw new ConflictException("Cannot delete a completed session");
-        }
-
         sessionRepository.delete(session);
     }
 

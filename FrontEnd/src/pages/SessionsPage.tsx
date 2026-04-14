@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CreateSessionModal from "../components/CreateSessionModal";
 import { EmptyState, ErrorState, LoadingState } from "../components/Feedback";
+import StatusBadge from "../components/StatusBadge";
 import { createSession, getSessions } from "../api/sessions";
 import type { CreateSessionPayload, SessionDetails } from "../types/api";
 import { formatCurrency, formatDateTime } from "../utils/formatters";
@@ -66,7 +67,7 @@ export default function SessionsPage() {
     }
   };
 
-  const latestSessions = sessions.slice(0, 3);
+  const latestSessions = sessions;
 
   return (
     <>
@@ -124,7 +125,7 @@ export default function SessionsPage() {
                           <h3>{session.name}</h3>
                           <p>{session.location}</p>
                         </div>
-                        <span className="status-badge status-live">{session.status}</span>
+                        <StatusBadge value={session.status} />
                       </div>
                       <p>{formatDateTime(session.startTime)}</p>
                       <p>{session.players.length} player(s)</p>

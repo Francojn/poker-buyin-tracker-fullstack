@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   acceptBuyIn,
   cancelBuyIn,
@@ -17,6 +17,7 @@ import {
 import {
   addPlayerToSession,
   completeSession,
+  deleteSession,
   getSessionById,
   invitePlayerToSession,
   removePlayerFromSession
@@ -39,6 +40,7 @@ const tabs: Array<{ id: SessionTab; label: string }> = [
 ];
 
 export default function SessionDetailsPage() {
+  const navigate = useNavigate();
   const { sessionId } = useParams<{ sessionId: string }>();
   const { user } = useAuth();
   const [session, setSession] = useState<SessionDetails | null>(null);
@@ -308,6 +310,24 @@ export default function SessionDetailsPage() {
     );
   };
 
+  const handleDeleteSession = async () => {
+    if (!sessionId) {
+      return;
+    }
+
+    const confirmed = window.confirm("Permanently delete this session? This cannot be undone.");
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await deleteSession(sessionId);
+      navigate("/sessions");
+    } catch (deleteError) {
+      setActionError(getErrorMessage(deleteError));
+    }
+  };
+
   if (!sessionId) {
     return <ErrorState message="No session id was provided in the route." />;
   }
@@ -337,18 +357,20 @@ export default function SessionDetailsPage() {
               </div>
 
               <div className="session-header-card">
-                <div>
-                  <h2>{session.name}</h2>
-                  <p>
-                    Hosted by {session.host.username} • {formatDateTime(session.startTime)}
-                  </p>
-                  <StatusBadge value={session.status} />
-                </div>
-
+                <h2>{session.name}</h2>
+                <p className="muted-text">
+                  Hosted by {session.host.username} • {formatDateTime(session.startTime)}
+                </p>
+                <StatusBadge value={session.status} />
                 {isHost ? (
-                  <button type="button" className="button" onClick={handleCompleteSession}>
-                    End Session
-                  </button>
+                  <>
+                    <button type="button" className="button button-small" onClick={handleCompleteSession}>
+                      End Session
+                    </button>
+                    <button type="button" className="button button-danger button-small" onClick={handleDeleteSession}>
+                      Delete Session
+                    </button>
+                  </>
                 ) : null}
               </div>
 

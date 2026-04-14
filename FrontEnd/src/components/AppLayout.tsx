@@ -23,7 +23,7 @@ export default function AppLayout() {
 
         <nav className="shell-nav">
           <NavLink to="/sessions">Sessions</NavLink>
-          <NavLink to="/connections">Connections</NavLink>
+          <NavLink to="/connections">Friends</NavLink>
           <NavLink to="/invites">Invites</NavLink>
         </nav>
 
