@@ -55,11 +55,6 @@ export default function LoginPage() {
       <section className="hero-card">
         <header className="hero-nav">
           <h1>Poker Buy-In Tracker</h1>
-          <nav>
-            <a href="#product">Product</a>
-            <a href="#features">Features</a>
-            <a href="#login">Log in</a>
-          </nav>
         </header>
 
         <div className="hero-content">
@@ -74,7 +69,7 @@ export default function LoginPage() {
           <form id="login" className="login-card" onSubmit={handleSubmit}>
             <div>
               <p className="eyebrow">{mode === "login" ? "Login" : "Register"}</p>
-              <h3>{mode === "login" ? "Connect to your backend" : "Create your account"}</h3>
+              <h3>{mode === "register" ? "Create your account" : null}</h3>
             </div>
 
             <div className="auth-toggle">
