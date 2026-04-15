@@ -11,6 +11,9 @@ FrontEnd/dist/
 .env.local
 .env.*.local
 
+# Backend secrets
+backend/src/main/resources/application.properties
+
 # IDE
 .vscode/
 .idea/
