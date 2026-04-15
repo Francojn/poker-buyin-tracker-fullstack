@@ -653,7 +653,7 @@ export default function SessionDetailsPage() {
                                 <option value="">Select friend</option>
                                 {friendsAvailableToAdd.map((candidate) => (
                                   <option key={candidate.id} value={candidate.id}>
-                                    {candidate.username} ({candidate.email})
+                                    {candidate.username} (#{candidate.userCode})
                                   </option>
                                 ))}
                               </select>
@@ -680,7 +680,7 @@ export default function SessionDetailsPage() {
                               <option value="">Select user</option>
                               {availableUsers.map((candidate) => (
                                 <option key={candidate.id} value={candidate.id}>
-                                  {candidate.username} ({candidate.email})
+                                  {candidate.username} (#{candidate.userCode})
                                 </option>
                               ))}
                             </select>

@@ -28,12 +28,12 @@ export function EmptyState({
   description
 }: {
   title: string;
-  description: string;
+  description?: string;
 }) {
   return (
     <div className="feedback-card">
       <h3>{title}</h3>
-      <p>{description}</p>
+      {description ? <p>{description}</p> : null}
     </div>
   );
 }
