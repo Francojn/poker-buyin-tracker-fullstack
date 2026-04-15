@@ -96,7 +96,7 @@ export default function SessionDetailsPage() {
   const [playerSearch, setPlayerSearch] = useState("");
   const [playerStatusFilter, setPlayerStatusFilter] = useState("ALL");
   const [buyInForm, setBuyInForm] = useState({ sessionPlayerId: "", amount: "", note: "", paymentMethod: "CASH" as PaymentMethod });
-  const [cashOutForm, setCashOutForm] = useState({ sessionPlayerId: "", amount: "", paymentMethod: "CASH" as PaymentMethod });
+  const [cashOutForm, setCashOutForm] = useState({ sessionPlayerId: "", cashAmount: "", cardAmount: "" });
 
   const loadPage = async () => {
     if (!sessionId) {
@@ -158,8 +158,8 @@ export default function SessionDetailsPage() {
     const totalCashOuts = cashOuts.reduce((sum, c) => sum + Number(c.amount), 0);
     const cashBuyIns = buyIns.filter((b) => b.paymentMethod === "CASH").reduce((sum, b) => sum + Number(b.amount), 0);
     const cardBuyIns = buyIns.filter((b) => b.paymentMethod === "CARD").reduce((sum, b) => sum + Number(b.amount), 0);
-    const cashCashOuts = cashOuts.filter((c) => c.paymentMethod === "CASH").reduce((sum, c) => sum + Number(c.amount), 0);
-    const cardCashOuts = cashOuts.filter((c) => c.paymentMethod === "CARD").reduce((sum, c) => sum + Number(c.amount), 0);
+    const cashCashOuts = cashOuts.reduce((sum, c) => sum + Number(c.cashAmount ?? 0), 0);
+    const cardCashOuts = cashOuts.reduce((sum, c) => sum + Number(c.cardAmount ?? 0), 0);
     return {
       totalPlayers: session?.players.length ?? 0,
       totalBuyIns,
@@ -331,7 +331,7 @@ export default function SessionDetailsPage() {
 
   const handleCreateCashOut = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!sessionId || !cashOutForm.sessionPlayerId || !cashOutForm.amount) {
+    if (!sessionId || !cashOutForm.sessionPlayerId || (!cashOutForm.cashAmount && !cashOutForm.cardAmount)) {
       return;
     }
 
@@ -340,10 +340,10 @@ export default function SessionDetailsPage() {
       async () => {
         await createCashOut(sessionId, {
           sessionPlayerId: cashOutForm.sessionPlayerId,
-          amount: Number(cashOutForm.amount),
-          paymentMethod: cashOutForm.paymentMethod
+          cashAmount: cashOutForm.cashAmount ? Number(cashOutForm.cashAmount) : undefined,
+          cardAmount: cashOutForm.cardAmount ? Number(cashOutForm.cardAmount) : undefined
         });
-        setCashOutForm({ sessionPlayerId: "", amount: "", paymentMethod: "CASH" });
+        setCashOutForm({ sessionPlayerId: "", cashAmount: "", cardAmount: "" });
       },
       "Cash-out recorded."
     );
@@ -455,11 +455,11 @@ export default function SessionDetailsPage() {
                     <strong>{formatCurrency(sessionStats.paidBuyIns)}</strong>
                   </article>
                   <article className="stat-card">
-                    <span>💵 Cash on Table</span>
+                    <span>Cash on Table</span>
                     <strong>{formatCurrency(sessionStats.cashOnTable)}</strong>
                   </article>
                   <article className="stat-card">
-                    <span>💳 Card on Table</span>
+                    <span>Card on Table</span>
                     <strong>{formatCurrency(sessionStats.cardOnTable)}</strong>
                   </article>
                   <article className="stat-card">
@@ -610,10 +610,6 @@ export default function SessionDetailsPage() {
                 <div className="stack-section">
                   <div className="stats-grid two-stat-columns">
                     <article className="stat-card">
-                      <span>Total Players</span>
-                      <strong>{session.players.length}</strong>
-                    </article>
-                    <article className="stat-card">
                       <span>Host</span>
                       <strong>{session.host.username}</strong>
                     </article>
@@ -720,6 +716,7 @@ export default function SessionDetailsPage() {
                             <tbody>
                               {filteredPlayerRows.map((player) => {
                                 const canRemove = player.role !== "HOST" && (isHost || player.userId === user?.id);
+                                const isSelf = player.userId === user?.id;
                                 return (
                                   <tr key={player.sessionPlayerId}>
                                     <td>
@@ -745,7 +742,7 @@ export default function SessionDetailsPage() {
                                             )
                                           }
                                         >
-                                          Remove
+                                          {isSelf ? "Leave" : "Remove"}
                                         </button>
                                       ) : (
                                         <span className="muted-text">No action</span>
@@ -762,6 +759,7 @@ export default function SessionDetailsPage() {
                         <div className="mobile-cards">
                           {filteredPlayerRows.map((player) => {
                             const canRemove = player.role !== "HOST" && (isHost || player.userId === user?.id);
+                            const isSelf = player.userId === user?.id;
                             return (
                               <div key={player.sessionPlayerId} className="mobile-row-card">
                                 <div className="mobile-row-header">
@@ -791,7 +789,7 @@ export default function SessionDetailsPage() {
                                         )
                                       }
                                     >
-                                      Remove
+                                      {isSelf ? "Leave" : "Remove"}
                                     </button>
                                   </div>
                                 ) : null}
@@ -973,7 +971,7 @@ export default function SessionDetailsPage() {
                                 className={buyInForm.paymentMethod === method ? "method-btn active" : "method-btn"}
                                 onClick={() => setBuyInForm((current) => ({ ...current, paymentMethod: method }))}
                               >
-                                {method === "CASH" ? "💵 Cash" : "💳 Card"}
+                                {method === "CASH" ? "Cash" : "Card"}
                               </button>
                             ))}
                           </div>
@@ -1038,7 +1036,7 @@ export default function SessionDetailsPage() {
                                     <td>{formatCurrency(buyIn.amount)}</td>
                                     <td>
                                       {buyIn.paymentMethod
-                                        ? <span className={`method-badge method-${buyIn.paymentMethod.toLowerCase()}`}>{buyIn.paymentMethod === "CASH" ? "💵 Cash" : "💳 Card"}</span>
+                                        ? <span className={`method-badge method-${buyIn.paymentMethod.toLowerCase()}`}>{buyIn.paymentMethod === "CASH" ? "Cash" : "Card"}</span>
                                         : <span className="muted-text">—</span>}
                                     </td>
                                     <td>{formatDateTime(buyIn.createdAt)}</td>
@@ -1115,7 +1113,7 @@ export default function SessionDetailsPage() {
                                 <div className="mobile-row-meta">
                                   <span className="muted-text">{formatDateTime(buyIn.createdAt)}</span>
                                   {buyIn.paymentMethod
-                                    ? <span className={`method-badge method-${buyIn.paymentMethod.toLowerCase()}`}>{buyIn.paymentMethod === "CASH" ? "💵 Cash" : "💳 Card"}</span>
+                                    ? <span className={`method-badge method-${buyIn.paymentMethod.toLowerCase()}`}>{buyIn.paymentMethod === "CASH" ? "Cash" : "Card"}</span>
                                     : null}
                                 </div>
                                 <div className="mobile-row-badges">
@@ -1272,34 +1270,32 @@ export default function SessionDetailsPage() {
                         </label>
 
                         <label className="form-field">
-                          <span>Amount (£)</span>
+                          <span>Cash amount (£)</span>
                           <input
                             type="number"
                             min="0"
                             step="0.01"
-                            value={cashOutForm.amount}
+                            value={cashOutForm.cashAmount}
+                            placeholder="0.00"
                             onChange={(event) =>
-                              setCashOutForm((current) => ({ ...current, amount: event.target.value }))
+                              setCashOutForm((current) => ({ ...current, cashAmount: event.target.value }))
                             }
-                            required
                           />
                         </label>
 
-                        <div className="form-field form-field-full">
-                          <span>Payment Method</span>
-                          <div className="method-toggle">
-                            {(["CASH", "CARD"] as PaymentMethod[]).map((method) => (
-                              <button
-                                key={method}
-                                type="button"
-                                className={cashOutForm.paymentMethod === method ? "method-btn active" : "method-btn"}
-                                onClick={() => setCashOutForm((current) => ({ ...current, paymentMethod: method }))}
-                              >
-                                {method === "CASH" ? "💵 Cash" : "💳 Card"}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
+                        <label className="form-field">
+                          <span>Card amount (£)</span>
+                          <input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={cashOutForm.cardAmount}
+                            placeholder="0.00"
+                            onChange={(event) =>
+                              setCashOutForm((current) => ({ ...current, cardAmount: event.target.value }))
+                            }
+                          />
+                        </label>
 
                         <div className="form-actions form-field-full">
                           <button type="submit" className="button" disabled={busyKey === "create-cashout"}>
@@ -1324,8 +1320,9 @@ export default function SessionDetailsPage() {
                             <thead>
                               <tr>
                                 <th>Player</th>
-                                <th>Amount</th>
-                                <th>Method</th>
+                                <th>Total</th>
+                                <th>Cash</th>
+                                <th>Card</th>
                                 <th>Created</th>
                                 <th>Status</th>
                                 <th>Actions</th>
@@ -1340,11 +1337,8 @@ export default function SessionDetailsPage() {
                                   <tr key={cashOut.id}>
                                     <td>{cashOut.username}</td>
                                     <td>{formatCurrency(cashOut.amount)}</td>
-                                    <td>
-                                      {cashOut.paymentMethod
-                                        ? <span className={`method-badge method-${cashOut.paymentMethod.toLowerCase()}`}>{cashOut.paymentMethod === "CASH" ? "💵 Cash" : "💳 Card"}</span>
-                                        : <span className="muted-text">—</span>}
-                                    </td>
+                                    <td>{cashOut.cashAmount ? formatCurrency(cashOut.cashAmount) : <span className="muted-text">—</span>}</td>
+                                    <td>{cashOut.cardAmount ? formatCurrency(cashOut.cardAmount) : <span className="muted-text">—</span>}</td>
                                     <td>{formatDateTime(cashOut.createdAt)}</td>
                                     <td><StatusBadge value={cashOut.status} /></td>
                                     <td>
@@ -1408,9 +1402,8 @@ export default function SessionDetailsPage() {
                                 </div>
                                 <div className="mobile-row-meta">
                                   <span className="muted-text">{formatDateTime(cashOut.createdAt)}</span>
-                                  {cashOut.paymentMethod
-                                    ? <span className={`method-badge method-${cashOut.paymentMethod.toLowerCase()}`}>{cashOut.paymentMethod === "CASH" ? "💵 Cash" : "💳 Card"}</span>
-                                    : null}
+                                  {cashOut.cashAmount ? <span className="method-badge method-cash">Cash {formatCurrency(cashOut.cashAmount)}</span> : null}
+                                  {cashOut.cardAmount ? <span className="method-badge method-card">Card {formatCurrency(cashOut.cardAmount)}</span> : null}
                                 </div>
                                 <div className="mobile-row-badges">
                                   <StatusBadge value={cashOut.status} />

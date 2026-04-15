@@ -379,6 +379,37 @@ button {
   border-radius: 10px;
 }
 
+/* ── Search suggestions combobox ─────────────────────────── */
+.search-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #1f232c;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-top: 4px;
+  padding: 6px;
+  list-style: none;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.search-suggestions li {
+  padding: 9px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #d7dfef;
+  font-size: 0.9rem;
+  transition: background 0.1s;
+}
+
+.search-suggestions li:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
 /* ── Connection rows (compact, no-wrap) ──────────────────── */
 .connection-row {
   padding: 10px 14px;

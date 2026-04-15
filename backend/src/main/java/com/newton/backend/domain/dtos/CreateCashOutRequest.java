@@ -1,6 +1,5 @@
 package com.newton.backend.domain.dtos;
 
-import com.newton.backend.domain.PaymentMethodEnum;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -18,7 +17,8 @@ import java.util.UUID;
 public class CreateCashOutRequest {
     @NotNull
     private UUID sessionPlayerId;
-    @NotNull @DecimalMin(value = "0.00")
-    private BigDecimal amount;
-    private PaymentMethodEnum paymentMethod;
+    @DecimalMin(value = "0.00")
+    private BigDecimal cashAmount;
+    @DecimalMin(value = "0.00")
+    private BigDecimal cardAmount;
 }

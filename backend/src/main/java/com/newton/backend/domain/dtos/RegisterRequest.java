@@ -21,6 +21,10 @@ public class RegisterRequest {
     @Pattern(regexp = "[\\w\\s-]+$", message = "Username can only contain letters, numbers, spaces and hyphens")
     private String username;
 
+    @NotBlank(message = "Code is required")
+    @Pattern(regexp = "\\d{4}", message = "Code must be exactly 4 digits")
+    private String userCode;
+
     @NotBlank(message = "Email is required")
     @Size(min = 2, max = 50, message = "Email must be between {min} and {max} characters")
     @Email(message = "Invalid email format")

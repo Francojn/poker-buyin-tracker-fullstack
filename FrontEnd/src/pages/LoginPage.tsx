@@ -11,6 +11,7 @@ export default function LoginPage() {
   const { isAuthenticated, login, register } = useAuth();
   const [mode, setMode] = useState<AuthMode>("login");
   const [username, setUsername] = useState("");
+  const [userCode, setUserCode] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [paymentLink, setPaymentLink] = useState("");
@@ -35,6 +36,7 @@ export default function LoginPage() {
       } else {
         await register({
           username,
+          userCode,
           email,
           password,
           paymentLink: paymentLink.trim() || undefined
@@ -99,16 +101,32 @@ export default function LoginPage() {
             </div>
 
             {mode === "register" ? (
-              <label className="form-field">
-                <span>Username</span>
-                <input
-                  type="text"
-                  value={username}
-                  onChange={(event) => setUsername(event.target.value)}
-                  placeholder="Jack"
-                  required
-                />
-              </label>
+              <>
+                <label className="form-field">
+                  <span>Username</span>
+                  <input
+                    type="text"
+                    value={username}
+                    onChange={(event) => setUsername(event.target.value)}
+                    placeholder="Jack"
+                    required
+                  />
+                </label>
+                <label className="form-field">
+                  <span>4-digit code</span>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={4}
+                    value={userCode}
+                    onChange={(event) =>
+                      setUserCode(event.target.value.replace(/\D/g, "").slice(0, 4))
+                    }
+                    placeholder="e.g. 1234"
+                    required
+                  />
+                </label>
+              </>
             ) : null}
 
             <label className="form-field">

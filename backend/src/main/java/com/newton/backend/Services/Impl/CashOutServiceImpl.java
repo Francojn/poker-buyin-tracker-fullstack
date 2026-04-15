@@ -10,6 +10,7 @@ import com.newton.backend.exceptions.ForbiddenException;
 import com.newton.backend.exceptions.NotFoundException;
 import com.newton.backend.mappers.CashOutMapper;
 
+import com.newton.backend.respositories.BuyInRepository;
 import com.newton.backend.respositories.CashOutRepository;
 import com.newton.backend.respositories.SessionPlayerRepository;
 import com.newton.backend.respositories.SessionRepository;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +30,7 @@ import java.util.UUID;
 public class CashOutServiceImpl implements CashOutService {
 
     private final CashOutRepository cashOutRepository;
+    private final BuyInRepository buyInRepository;
     private final SessionRepository sessionRepository;
     private final SessionPlayerRepository sessionPlayerRepository;
     private final CashOutMapper cashOutMapper;
@@ -50,13 +53,58 @@ public class CashOutServiceImpl implements CashOutService {
             throw new ConflictException("This player already has a cash-out recorded");
         }
 
+        BigDecimal requestCash = request.getCashAmount() != null ? request.getCashAmount() : BigDecimal.ZERO;
+        BigDecimal requestCard = request.getCardAmount() != null ? request.getCardAmount() : BigDecimal.ZERO;
+
+        if (requestCash.compareTo(BigDecimal.ZERO) <= 0 && requestCard.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new ConflictException("Cash-out amount must be greater than zero");
+        }
+
+        List<BuyIn> paidBuyIns = buyInRepository.findBySessionIdAndStatusIn(
+                sessionId, List.of(BuyInStatusEnum.PAID, BuyInStatusEnum.CONFIRMED));
+
+        List<CashOut> activeCashOuts = cashOutRepository.findBySessionId(sessionId).stream()
+                .filter(c -> c.getStatus() != CashOutStatusEnum.CANCELLED)
+                .toList();
+
+        if (requestCash.compareTo(BigDecimal.ZERO) > 0) {
+            BigDecimal cashPool = paidBuyIns.stream()
+                    .filter(b -> PaymentMethodEnum.CASH.equals(b.getPaymentMethod()))
+                    .map(BuyIn::getAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            BigDecimal usedCash = activeCashOuts.stream()
+                    .map(c -> c.getCashAmount() != null ? c.getCashAmount() : BigDecimal.ZERO)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            if (usedCash.add(requestCash).compareTo(cashPool) > 0) {
+                throw new ConflictException("Not enough cash buy-ins remaining to cover this cash-out");
+            }
+        }
+
+        if (requestCard.compareTo(BigDecimal.ZERO) > 0) {
+            BigDecimal cardPool = paidBuyIns.stream()
+                    .filter(b -> PaymentMethodEnum.CARD.equals(b.getPaymentMethod()))
+                    .map(BuyIn::getAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            BigDecimal usedCard = activeCashOuts.stream()
+                    .map(c -> c.getCardAmount() != null ? c.getCardAmount() : BigDecimal.ZERO)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            if (usedCard.add(requestCard).compareTo(cardPool) > 0) {
+                throw new ConflictException("Not enough card buy-ins remaining to cover this cash-out");
+            }
+        }
+
         CashOut cashOut = CashOut.builder()
                 .session(session)
                 .sessionPlayer(sessionPlayer)
-                .amount(request.getAmount())
+                .amount(requestCash.add(requestCard))
+                .cashAmount(requestCash.compareTo(BigDecimal.ZERO) > 0 ? requestCash : null)
+                .cardAmount(requestCard.compareTo(BigDecimal.ZERO) > 0 ? requestCard : null)
                 .status(CashOutStatusEnum.RECORDED)
                 .createdAt(LocalDateTime.now())
-                .paymentMethod(request.getPaymentMethod())
                 .build();
 
         cashOutRepository.save(cashOut);

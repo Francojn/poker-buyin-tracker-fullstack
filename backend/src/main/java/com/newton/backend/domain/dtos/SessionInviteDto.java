@@ -24,9 +24,11 @@ public class SessionInviteDto {
 
     private UUID invitedUserId;
     private String invitedUsername;
+    private String invitedUserCode;
 
     private UUID invitedById;
     private String invitedByUsername;
+    private String invitedByUserCode;
 
     private SessionInviteStatusEnum status;
 

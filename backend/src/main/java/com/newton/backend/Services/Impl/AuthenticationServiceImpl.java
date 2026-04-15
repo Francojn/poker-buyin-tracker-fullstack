@@ -74,12 +74,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new ConflictException("Email already exists");
         }
 
-        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
-            throw new ConflictException("Username already exists");
+        if (userRepository.findByUsernameAndUserCode(request.getUsername(), request.getUserCode()).isPresent()) {
+            throw new ConflictException("Username and code combination already taken");
         }
 
         User user = User.builder()
                 .username(request.getUsername())
+                .userCode(request.getUserCode())
                 .email(request.getEmail())
                 .paymentLink(request.getPaymentLink())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))

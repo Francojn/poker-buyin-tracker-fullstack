@@ -18,8 +18,10 @@ public class ConnectionDto {
     private UUID id;
     private UUID senderId;
     private String senderUsername;
+    private String senderUserCode;
     private UUID recipientId;
     private String recipientUsername;
+    private String recipientUserCode;
     private ConnectionStatusEnum status;
     private LocalDateTime createdAt;
     private LocalDateTime respondedAt;

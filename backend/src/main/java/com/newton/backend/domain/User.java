@@ -13,7 +13,9 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"username", "user_code"})
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -29,6 +31,9 @@ public class User {
 
     @Column(name = "username", nullable = false)
     private String username;
+
+    @Column(name = "user_code", length = 4)
+    private String userCode;
 
     @Column(name = "email", nullable = false)
     private String email;

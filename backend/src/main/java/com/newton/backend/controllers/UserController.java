@@ -5,6 +5,7 @@ import com.newton.backend.domain.SessionInvite;
 import com.newton.backend.domain.dtos.CreateUserRequest;
 import com.newton.backend.domain.dtos.SessionInviteDto;
 import com.newton.backend.domain.dtos.UserDto;
+import com.newton.backend.domain.dtos.UserSummaryDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,12 @@ public class UserController {
     public ResponseEntity<List<UserDto>> listAllUsers() {
         List<UserDto> users = userService.listAllUsers();
         return ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<UserSummaryDto>> searchUsers(
+            @RequestParam(defaultValue = "") String username) {
+        return ResponseEntity.ok(userService.searchUsers(username));
     }
 
     @GetMapping("/{id}")

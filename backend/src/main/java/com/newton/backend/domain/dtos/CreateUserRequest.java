@@ -22,6 +22,10 @@ public class CreateUserRequest {
     @Pattern(regexp = "[\\w\\s-]+$", message = "Username can only contain letters, numbers, spaces and hyphens")
     private String username;
 
+    @NotBlank(message = "Code is required")
+    @Pattern(regexp = "\\d{4}", message = "Code must be exactly 4 digits")
+    private String userCode;
+
     @NotBlank(message= "email is required")
     @Size(min = 2, max = 50, message = "email must be between {min} and {max} characters")
     @Email(message = "Invalid email format")

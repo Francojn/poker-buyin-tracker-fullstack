@@ -5,6 +5,7 @@ import com.newton.backend.domain.User;
 import com.newton.backend.domain.dtos.CreateUserRequest;
 import com.newton.backend.domain.dtos.SessionInviteDto;
 import com.newton.backend.domain.dtos.UserDto;
+import com.newton.backend.domain.dtos.UserSummaryDto;
 import com.newton.backend.exceptions.ConflictException;
 import com.newton.backend.exceptions.ForbiddenException;
 import com.newton.backend.exceptions.NotFoundException;
@@ -51,8 +52,8 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new ConflictException("Email already exists");
         }
-        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
-            throw new ConflictException("Username already exists");
+        if (userRepository.findByUsernameAndUserCode(request.getUsername(), request.getUserCode() != null ? request.getUserCode() : "0000").isPresent()) {
+            throw new ConflictException("Username and code combination already taken");
         }
 
         User user = userMapper.toEntity(request);
@@ -74,6 +75,19 @@ public class UserServiceImpl implements UserService {
 
         return user.getReceivedInvites().stream()
                 .map(inviteMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserSummaryDto> searchUsers(String username) {
+        return userRepository.findAll().stream()
+                .filter(u -> u.getUsername().toLowerCase().contains(username.toLowerCase()))
+                .map(u -> UserSummaryDto.builder()
+                        .userId(u.getId())
+                        .username(u.getUsername())
+                        .userCode(u.getUserCode())
+                        .build())
                 .collect(Collectors.toList());
     }
 

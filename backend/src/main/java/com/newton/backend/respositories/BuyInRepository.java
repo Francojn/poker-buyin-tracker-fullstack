@@ -1,6 +1,7 @@
 package com.newton.backend.respositories;
 
 import com.newton.backend.domain.BuyIn;
+import com.newton.backend.domain.BuyInStatusEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,4 +12,5 @@ import java.util.UUID;
 public interface BuyInRepository extends JpaRepository<BuyIn, UUID> {
     List<BuyIn> findBySessionId(UUID sessionId);
     List<BuyIn> findBySessionPlayerId(UUID sessionPlayerId);
+    List<BuyIn> findBySessionIdAndStatusIn(UUID sessionId, List<BuyInStatusEnum> statuses);
 }

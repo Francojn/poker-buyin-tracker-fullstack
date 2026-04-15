@@ -16,6 +16,7 @@ export const endpoints = {
   },
   users: {
     list: "/api/v1/users",
+    search: (username: string) => `/api/v1/users/search?username=${encodeURIComponent(username)}`,
     details: (userId: string) => `/api/v1/users/${userId}`,
     receivedInvites: (userId: string) => `/api/v1/users/${userId}/receivedInvites`,
     acceptedConnections: (userId: string) => `/api/v1/users/${userId}/connections`,

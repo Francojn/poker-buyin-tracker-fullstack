@@ -25,6 +25,12 @@ public class CashOut {
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
 
+    @Column(name = "cash_amount")
+    private BigDecimal cashAmount;
+
+    @Column(name = "card_amount")
+    private BigDecimal cardAmount;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 

@@ -3,13 +3,20 @@ export type Id = string;
 export interface User {
   id: Id;
   username: string;
-  email: string;
+  userCode: string;
   paymentLink?: string | null;
 }
 
 export interface UserSummary {
   userId: Id;
   username: string;
+  userCode: string;
+}
+
+export interface UserSearchResult {
+  userId: Id;
+  username: string;
+  userCode: string;
 }
 
 export type SessionStatus = "LIVE" | "COMPLETED";
@@ -84,8 +91,9 @@ export interface CashOut {
   userId: Id;
   username: string;
   amount: number | string;
+  cashAmount?: number | string | null;
+  cardAmount?: number | string | null;
   status: CashOutStatus;
-  paymentMethod?: PaymentMethod | null;
   createdAt: string;
   paidOutAt?: string | null;
   cancelledAt?: string | null;
@@ -95,8 +103,10 @@ export interface Connection {
   id: Id;
   senderId: Id;
   senderUsername: string;
+  senderUserCode: string;
   recipientId: Id;
   recipientUsername: string;
+  recipientUserCode: string;
   status: ConnectionStatus;
   createdAt: string;
   respondedAt?: string | null;
@@ -116,6 +126,7 @@ export interface LoginPayload {
 
 export interface RegisterPayload {
   username: string;
+  userCode: string;
   email: string;
   password: string;
   paymentLink?: string;
@@ -141,8 +152,8 @@ export interface CreateBuyInPayload {
 
 export interface CreateCashOutPayload {
   sessionPlayerId: Id;
-  amount: number;
-  paymentMethod?: PaymentMethod;
+  cashAmount?: number;
+  cardAmount?: number;
 }
 
 export interface CreateConnectionPayload {

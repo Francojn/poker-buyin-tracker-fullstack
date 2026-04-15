@@ -1,7 +1,6 @@
 package com.newton.backend.domain.dtos;
 
 import com.newton.backend.domain.CashOutStatusEnum;
-import com.newton.backend.domain.PaymentMethodEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,8 +21,9 @@ public class CashOutDto {
     private UUID userId;
     private String username;
     private BigDecimal amount;
+    private BigDecimal cashAmount;
+    private BigDecimal cardAmount;
     private CashOutStatusEnum status;
-    private PaymentMethodEnum paymentMethod;
     private LocalDateTime createdAt;
     private LocalDateTime paidOutAt;
     private LocalDateTime cancelledAt;

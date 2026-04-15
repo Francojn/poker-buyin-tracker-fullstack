@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState, type FormEvent } from "react";
-import { getUsers } from "../api/users";
+import { useEffect, useState, type FormEvent } from "react";
+import { searchUsers } from "../api/users";
 import {
   acceptConnection,
   cancelConnectionRequest,
@@ -12,7 +12,7 @@ import {
 import { EmptyState, ErrorState, LoadingState } from "../components/Feedback";
 import StatusBadge from "../components/StatusBadge";
 import { useAuth } from "../context/AuthContext";
-import type { Connection, User } from "../types/api";
+import type { Connection, UserSearchResult } from "../types/api";
 import { formatDateTime } from "../utils/formatters";
 import { getErrorMessage } from "../utils/http";
 
@@ -20,8 +20,10 @@ export default function ConnectionsPage() {
   const { user } = useAuth();
   const [acceptedConnections, setAcceptedConnections] = useState<Connection[]>([]);
   const [pendingConnections, setPendingConnections] = useState<Connection[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
   const [selectedRecipientId, setSelectedRecipientId] = useState("");
+  const [friendSearch, setFriendSearch] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [suggestions, setSuggestions] = useState<UserSearchResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [actionError, setActionError] = useState("");
@@ -40,15 +42,13 @@ export default function ConnectionsPage() {
     setError("");
 
     try {
-      const [accepted, pending, allUsers] = await Promise.all([
+      const [accepted, pending] = await Promise.all([
         getAcceptedConnections(user.id),
-        getPendingConnections(user.id),
-        getUsers()
+        getPendingConnections(user.id)
       ]);
 
       setAcceptedConnections(accepted);
       setPendingConnections(pending);
-      setUsers(allUsers);
     } catch (loadError) {
       setError(getErrorMessage(loadError));
     } finally {
@@ -60,10 +60,6 @@ export default function ConnectionsPage() {
     void loadPage();
   }, [user?.id]);
 
-  const availableUsers = useMemo(
-    () => users.filter((candidate) => candidate.id !== user?.id),
-    [users, user?.id]
-  );
 
   const handleSendRequest = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -82,6 +78,8 @@ export default function ConnectionsPage() {
         recipientId: selectedRecipientId
       });
       setSelectedRecipientId("");
+      setFriendSearch("");
+      setSuggestions([]);
       await loadPage();
     } catch (submitError) {
       setActionError(getErrorMessage(submitError));
@@ -122,21 +120,45 @@ export default function ConnectionsPage() {
             <article className="section-card">
               <h3>Send friend request</h3>
               <form className="form-grid compact-form" onSubmit={handleSendRequest}>
-                <label className="form-field form-field-full">
-                  <span>Select user</span>
-                  <select
-                    value={selectedRecipientId}
-                    onChange={(event) => setSelectedRecipientId(event.target.value)}
-                    required
-                  >
-                    <option value="">Choose a user</option>
-                    {availableUsers.map((candidate) => (
-                      <option key={candidate.id} value={candidate.id}>
-                        {candidate.username} ({candidate.email})
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                <div className="form-field form-field-full" style={{ position: "relative" }}>
+                  <span>Search user</span>
+                  <input
+                    type="text"
+                    placeholder="Type a username..."
+                    value={friendSearch}
+                    autoComplete="off"
+                    onChange={(event) => {
+                      const val = event.target.value;
+                      setFriendSearch(val);
+                      setSelectedRecipientId("");
+                      setShowSuggestions(true);
+                      if (val.trim().length >= 1) {
+                        void searchUsers(val.trim()).then(setSuggestions).catch(() => setSuggestions([]));
+                      } else {
+                        setSuggestions([]);
+                      }
+                    }}
+                    onFocus={() => setShowSuggestions(true)}
+                    onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+                  />
+                  {showSuggestions && suggestions.length > 0 ? (
+                    <ul className="search-suggestions">
+                      {suggestions.map((u) => (
+                        <li
+                          key={u.userId}
+                          onMouseDown={() => {
+                            setSelectedRecipientId(u.userId);
+                            setFriendSearch(`${u.username}#${u.userCode}`);
+                            setShowSuggestions(false);
+                            setSuggestions([]);
+                          }}
+                        >
+                          {u.username}<span style={{ color: "var(--muted)", marginLeft: "4px" }}>#{u.userCode}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                </div>
 
                 {actionError ? <p className="form-error form-field-full">{actionError}</p> : null}
 
@@ -157,7 +179,7 @@ export default function ConnectionsPage() {
                   {pendingConnections.map((connection) => (
                     <div key={connection.id} className="row-card connection-row">
                       <div>
-                        <strong>{connection.senderUsername}</strong>
+                        <strong>{connection.senderUsername}<span className="muted-text" style={{ fontWeight: 400 }}>#{connection.senderUserCode}</span></strong>
                         <p className="helper-text">{formatDateTime(connection.createdAt)}</p>
                       </div>
                       <div className="row-actions">
@@ -197,10 +219,14 @@ export default function ConnectionsPage() {
                     connection.senderId === user?.id
                       ? connection.recipientUsername
                       : connection.senderUsername;
+                  const otherCode =
+                    connection.senderId === user?.id
+                      ? connection.recipientUserCode
+                      : connection.senderUserCode;
 
                   return (
                     <div key={connection.id} className="row-card connection-row">
-                      <strong>{otherName}</strong>
+                      <strong>{otherName}<span className="muted-text" style={{ fontWeight: 400 }}>#{otherCode}</span></strong>
                       <div className="row-actions">
                         <StatusBadge value={connection.status} />
                         {confirmRemoveId === connection.id ? (

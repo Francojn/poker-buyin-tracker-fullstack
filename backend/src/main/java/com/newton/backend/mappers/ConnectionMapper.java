@@ -10,7 +10,9 @@ public interface ConnectionMapper {
 
     @Mapping(target = "senderId", source = "sender.id")
     @Mapping(target = "senderUsername", source = "sender.username")
+    @Mapping(target = "senderUserCode", source = "sender.userCode")
     @Mapping(target = "recipientId", source = "recipient.id")
     @Mapping(target = "recipientUsername", source = "recipient.username")
+    @Mapping(target = "recipientUserCode", source = "recipient.userCode")
     ConnectionDto toDto(Connection connection);
 }

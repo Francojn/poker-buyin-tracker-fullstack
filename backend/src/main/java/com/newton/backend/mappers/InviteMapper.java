@@ -16,7 +16,9 @@ public interface InviteMapper {
     @Mapping(source = "session.location", target = "sessionLocation")
     @Mapping(source = "invitedUser.id", target = "invitedUserId")
     @Mapping(source = "invitedUser.username", target = "invitedUsername")
+    @Mapping(source = "invitedUser.userCode", target = "invitedUserCode")
     @Mapping(source = "invitedBy.id", target = "invitedById")
     @Mapping(source = "invitedBy.username", target = "invitedByUsername")
+    @Mapping(source = "invitedBy.userCode", target = "invitedByUserCode")
     SessionInviteDto toDto(SessionInvite invite);
 }
