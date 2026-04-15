@@ -3,14 +3,15 @@ import type { ApiErrorResponse } from "../types/api";
 
 export function getErrorMessage(error: unknown) {
   if (axios.isAxiosError<ApiErrorResponse>(error)) {
-    const data = error.response?.data;
+    const data = error.response?.data as unknown;
     if (typeof data === "string" && data.trim()) {
       return data;
     }
+    const obj = data as ApiErrorResponse | undefined;
     return (
-      data?.message ||
-      data?.error ||
-      data?.details ||
+      obj?.message ||
+      obj?.error ||
+      obj?.details ||
       error.message
     );
   }
