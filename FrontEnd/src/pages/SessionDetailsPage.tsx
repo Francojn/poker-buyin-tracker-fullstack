@@ -428,6 +428,16 @@ export default function SessionDetailsPage() {
                 <p className="muted-text">
                   Hosted by {session.host.username} • {formatDateTime(session.startTime)}
                 </p>
+                {!isHost && session.host.paymentLink ? (
+                  <a
+                    href={session.host.paymentLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="button button-outline-primary button-small"
+                  >
+                    Pay {session.host.username}
+                  </a>
+                ) : null}
                 <StatusBadge value={session.status} />
                 {isHost ? (
                   <>

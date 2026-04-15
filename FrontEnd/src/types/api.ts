@@ -11,6 +11,7 @@ export interface UserSummary {
   userId: Id;
   username: string;
   userCode: string;
+  paymentLink?: string | null;
 }
 
 export interface UserSearchResult {

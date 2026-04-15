@@ -32,6 +32,7 @@ export default function AppLayout() {
             Invites
             {invites > 0 ? <span className="nav-dot">{invites}</span> : null}
           </NavLink>
+          <NavLink to="/profile">Profile</NavLink>
         </nav>
 
         <div className="shell-user">

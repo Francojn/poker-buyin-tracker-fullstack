@@ -4,6 +4,7 @@ import com.newton.backend.Services.UserService;
 import com.newton.backend.domain.SessionInvite;
 import com.newton.backend.domain.dtos.CreateUserRequest;
 import com.newton.backend.domain.dtos.SessionInviteDto;
+import com.newton.backend.domain.dtos.UpdatePaymentLinkRequest;
 import com.newton.backend.domain.dtos.UserDto;
 import com.newton.backend.domain.dtos.UserSummaryDto;
 import jakarta.servlet.http.HttpServletRequest;
@@ -54,6 +55,16 @@ public class UserController {
         UUID currentUserId = (UUID) request.getAttribute("userId");
         List<SessionInviteDto> invites = userService.getReceivedInvites(id, currentUserId);
         return ResponseEntity.ok(invites);
+    }
+
+    @PatchMapping("/{id}/payment-link")
+    public ResponseEntity<UserDto> updatePaymentLink(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdatePaymentLinkRequest request,
+            HttpServletRequest httpRequest) {
+        UUID currentUserId = (UUID) httpRequest.getAttribute("userId");
+        UserDto user = userService.updatePaymentLink(id, currentUserId, request.getPaymentLink());
+        return ResponseEntity.ok(user);
     }
 
     @DeleteMapping("/{id}")

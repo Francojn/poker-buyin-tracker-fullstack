@@ -5,6 +5,7 @@ import { useAuth } from "./context/AuthContext";
 import ConnectionsPage from "./pages/ConnectionsPage";
 import InvitesPage from "./pages/InvitesPage";
 import LoginPage from "./pages/LoginPage";
+import ProfilePage from "./pages/ProfilePage";
 import SessionDetailsPage from "./pages/SessionDetailsPage";
 import SessionsPage from "./pages/SessionsPage";
 
@@ -30,6 +31,7 @@ export default function App() {
         <Route path="/sessions/:sessionId" element={<SessionDetailsPage />} />
         <Route path="/connections" element={<ConnectionsPage />} />
         <Route path="/invites" element={<InvitesPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

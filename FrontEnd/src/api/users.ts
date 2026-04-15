@@ -16,3 +16,8 @@ export async function getUserReceivedInvites(userId: string) {
   const response = await apiClient.get<SessionInvite[]>(endpoints.users.receivedInvites(userId));
   return response.data;
 }
+
+export async function updatePaymentLink(userId: string, paymentLink: string | null) {
+  const response = await apiClient.patch<User>(endpoints.users.updatePaymentLink(userId), { paymentLink });
+  return response.data;
+}

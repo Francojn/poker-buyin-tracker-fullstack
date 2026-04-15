@@ -92,6 +92,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto updatePaymentLink(UUID userId, UUID currentUserId, String paymentLink) {
+        if (!userId.equals(currentUserId)) {
+            throw new ForbiddenException("You can only update your own payment link");
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        user.setPaymentLink(paymentLink);
+        User saved = userRepository.save(user);
+        return userMapper.toDto(saved);
+    }
+
+    @Override
     public void deleteUserById(UUID userId, UUID currentUserId) {
         if (!userId.equals(currentUserId)) {
             throw new ForbiddenException("You can only delete your own account");

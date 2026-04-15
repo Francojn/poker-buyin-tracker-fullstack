@@ -19,6 +19,7 @@ interface AuthContextValue {
   login: (payload: LoginPayload) => Promise<void>;
   register: (payload: RegisterPayload) => Promise<void>;
   logout: () => void;
+  updateUser: (user: User) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -68,6 +69,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
     localStorage.removeItem(USER_STORAGE_KEY);
   };
 
+  const updateUser = (nextUser: User) => {
+    setUser(nextUser);
+    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(nextUser));
+  };
+
   const value = useMemo(
     () => ({
       token,
@@ -75,7 +81,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
       isAuthenticated: Boolean(token),
       login,
       register,
-      logout
+      logout,
+      updateUser
     }),
     [token, user]
   );

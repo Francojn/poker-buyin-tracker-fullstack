@@ -20,7 +20,8 @@ export const endpoints = {
     details: (userId: string) => `/api/v1/users/${userId}`,
     receivedInvites: (userId: string) => `/api/v1/users/${userId}/receivedInvites`,
     acceptedConnections: (userId: string) => `/api/v1/users/${userId}/connections`,
-    pendingConnections: (userId: string) => `/api/v1/users/${userId}/connection-requests/pending`
+    pendingConnections: (userId: string) => `/api/v1/users/${userId}/connection-requests/pending`,
+    updatePaymentLink: (userId: string) => `/api/v1/users/${userId}/payment-link`
   },
   buyIns: {
     listForSession: (sessionId: string) => `/api/v1/sessions/${sessionId}/buyins`,

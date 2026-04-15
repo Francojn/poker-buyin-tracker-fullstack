@@ -18,5 +18,6 @@ public interface UserService {
     List<SessionInviteDto> getReceivedInvites(UUID userId, UUID currentUserId);
     void deleteUserById(UUID userId, UUID currentUserId);
     List<UserSummaryDto> searchUsers(String username);
+    UserDto updatePaymentLink(UUID userId, UUID currentUserId, String paymentLink);
 
 }
