@@ -129,9 +129,37 @@ export default function SessionDetailsPage() {
     }
   };
 
+  const refreshData = async () => {
+    if (!sessionId) return;
+    try {
+      const [sessionDetails, allUsers, buyInList, cashOutList, inviteResult, connectionList] = await Promise.all([
+        getSessionById(sessionId),
+        getUsers(),
+        getBuyInsForSession(sessionId),
+        getCashOutsForSession(sessionId),
+        getInvitesForSession(sessionId).catch(() => [] as import("../types/api").SessionInvite[]),
+        user ? getAcceptedConnections(user.id) : Promise.resolve([] as Connection[])
+      ]);
+      setSession(sessionDetails);
+      setUsers(allUsers);
+      setBuyIns(buyInList);
+      setCashOuts(cashOutList);
+      setSessionInvites(inviteResult);
+      setConnections(connectionList);
+    } catch {
+      // silently ignore poll errors
+    }
+  };
+
   useEffect(() => {
     void loadPage();
   }, [sessionId]);
+
+  useEffect(() => {
+    if (session?.status !== "LIVE") return;
+    const interval = setInterval(() => { void refreshData(); }, 5000);
+    return () => clearInterval(interval);
+  }, [session?.status, sessionId]);
 
   const isHost = session?.host?.userId === user?.id;
 
