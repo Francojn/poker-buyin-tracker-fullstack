@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useState, useEffect, type ChangeEvent, type FormEvent } from "react";
 import type { CreateSessionPayload } from "../types/api";
 
 const initialState: CreateSessionPayload = {
@@ -22,6 +22,15 @@ export default function CreateSessionModal({
   onSubmit: (payload: CreateSessionPayload) => Promise<void>;
 }) {
   const [form, setForm] = useState<CreateSessionPayload>(initialState);
+
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [open]);
 
   if (!open) {
     return null;

@@ -880,6 +880,9 @@ button.list-card:hover {
   width: min(100%, 760px);
   padding: 24px;
   margin: auto;
+  max-height: 90vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .text-center {
