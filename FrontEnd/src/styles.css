@@ -874,6 +874,7 @@ button.list-card:hover {
   padding: 24px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  z-index: 100;
 }
 
 .modal-card {
