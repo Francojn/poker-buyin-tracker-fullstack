@@ -508,18 +508,6 @@ export default function SessionDetailsPage() {
               ) : (
                 <div className="stats-grid">
                   <article className="stat-card">
-                    <span>Total Buy-Ins</span>
-                    <strong>{formatCurrency(sessionStats.totalBuyIns)}</strong>
-                  </article>
-                  <article className="stat-card">
-                    <span>Paid Amount</span>
-                    <strong>{formatCurrency(sessionStats.paidBuyIns)}</strong>
-                  </article>
-                  <article className="stat-card">
-                    <span>Money on Table</span>
-                    <strong>{formatCurrency(sessionStats.moneyOnTable)}</strong>
-                  </article>
-                  <article className="stat-card">
                     <span>Total Players</span>
                     <strong>{sessionStats.totalPlayers}</strong>
                   </article>
