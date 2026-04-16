@@ -201,6 +201,16 @@ export default function SessionDetailsPage() {
     };
   }, [buyIns, cashOuts, session?.players.length]);
 
+  const cashOutByPlayer = useMemo(() => {
+    return cashOuts
+      .filter(co => co.status !== "CANCELLED")
+      .reduce<Record<string, number>>((acc, co) => {
+        const id = String(co.sessionPlayerId);
+        acc[id] = (acc[id] ?? 0) + Number(co.amount ?? 0);
+        return acc;
+      }, {});
+  }, [cashOuts]);
+
   const playerRows = useMemo(() => {
     if (!session) {
       return [];
@@ -511,6 +521,10 @@ export default function SessionDetailsPage() {
                     <span>Total Players</span>
                     <strong>{sessionStats.totalPlayers}</strong>
                   </article>
+                  <article className="stat-card">
+                    <span>Host</span>
+                    <strong>{session.host.username}</strong>
+                  </article>
                 </div>
               )}
 
@@ -634,13 +648,6 @@ export default function SessionDetailsPage() {
 
               {tab === "players" ? (
                 <div className="stack-section">
-                  <div className="stats-grid two-stat-columns">
-                    <article className="stat-card">
-                      <span>Host</span>
-                      <strong>{session.host.username}</strong>
-                    </article>
-                  </div>
-
                   <div className="table-toolbar">
                     <input
                       type="text"
@@ -1203,13 +1210,13 @@ export default function SessionDetailsPage() {
                           <tbody>
                             {[...session.players]
                               .sort((a, b) => {
-                                const netA = Number(a.totalCashOut ?? 0) - Number(a.totalBuyIn ?? 0);
-                                const netB = Number(b.totalCashOut ?? 0) - Number(b.totalBuyIn ?? 0);
+                                const netA = (cashOutByPlayer[String(a.sessionPlayerId)] ?? 0) - Number(a.totalBuyIn ?? 0);
+                                const netB = (cashOutByPlayer[String(b.sessionPlayerId)] ?? 0) - Number(b.totalBuyIn ?? 0);
                                 return netB - netA;
                               })
                               .map((player) => {
                                 const buyIn = Number(player.totalBuyIn ?? 0);
-                                const cashOut = Number(player.totalCashOut ?? 0);
+                                const cashOut = cashOutByPlayer[String(player.sessionPlayerId)] ?? 0;
                                 const net = cashOut - buyIn;
                                 return (
                                   <tr key={player.sessionPlayerId}>

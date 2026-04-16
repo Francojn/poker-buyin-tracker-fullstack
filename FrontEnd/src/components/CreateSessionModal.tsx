@@ -25,11 +25,22 @@ export default function CreateSessionModal({
 
   useEffect(() => {
     if (open) {
-      document.body.style.overflow = "hidden";
+      const scrollY = window.scrollY;
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = "100%";
     } else {
-      document.body.style.overflow = "";
+      const scrollY = document.body.style.top;
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      window.scrollTo(0, parseInt(scrollY || "0") * -1);
     }
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+    };
   }, [open]);
 
   if (!open) {
@@ -63,9 +74,6 @@ export default function CreateSessionModal({
             <p className="eyebrow">New Session</p>
             <h3>Create a poker session</h3>
           </div>
-          <button type="button" className="button button-secondary" onClick={handleClose}>
-            Close
-          </button>
         </div>
 
         <form className="form-grid" onSubmit={handleSubmit}>
